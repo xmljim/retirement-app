@@ -3,12 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/data-grid": "^4.0.0-alpha.37",
+    "@material-ui/icons": "^4.11.2",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@unicef/material-ui-currency-textfield": "^0.8.6",
+    "axios": "^0.21.1",
+    "chart.js": "^3.5.1",
     "react": "^17.0.2",
+    "react-chartjs-2": "^3.0.4",
     "react-dom": "^17.0.2",
+    "react-number-format": "^4.7.3",
     "react-scripts": "4.0.3",
+    "react-tabs": "^3.2.2",
+    "victory": "^35.11.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
