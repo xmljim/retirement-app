@@ -193,7 +193,7 @@ export const RetirementChart = ({retirementData}) => {
                 tickFormat={(x) => (`$${x / 1000}k`)}
             />
             <VictoryBar data={data} x='year' y='balance' 
-                labelComponent={<VictoryTooltip/>}
+                labelComponent={<VictoryTooltip />}
                 events={events} />
         </VictoryChart>
         
