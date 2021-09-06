@@ -63,8 +63,8 @@ export const RetirementTabs = ({retirementData}) => {
             <AppBar position="static">
                 <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
                     <Tab label="Retirement Summary" {...a11yProps(0)} />
-                    <Tab label="Retirement Timeline" {...a11yProps(1)} />
-                    <Tab label="Retirement Burndown" {...a11yProps(2)} />
+                    <Tab label="Retirement Ledger" {...a11yProps(1)} disabled={retirementData === null}/>
+                    <Tab label="Retirement Timeline" {...a11yProps(2)} disabled={retirementData === null}/>
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>

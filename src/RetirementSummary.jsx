@@ -168,70 +168,188 @@ export const RetirementSummary = ({retirementData}) => {
         return pct;
     }
 
+    const targetAnnualRetirementBudget = currentSalary * .8;
+    const estimatedProvidedBudget = currentSalary * incomePct;
+    const estimatedProvidedPct = incomePct * (1/.8);
+    const estimatedShortfall = targetAnnualRetirementBudget - estimatedProvidedBudget;
+
     return (
-        <Paper style={{width: '80%', height: '80%', textAlign: 'left', padding: '4pt 4pt 2pt'}}>
-            <div>
-                If you retire at the age of <strong>{retirementAge}</strong> in <strong>{retirementYear}</strong>, 
-                your current retirement balance of <strong>{formatCurrency(currentRetirementBalance)}</strong> will
-                result in an estimated balance of <strong>{formatCurrency(balanceAtRetirement)}</strong>. 
-                Over this time, you will contribute <strong>{formatCurrency(totalSelfContributions)}</strong>, 
-                and your employer will add another <strong>{formatCurrency(totalEmployerContributions)}</strong>.
-            </div>
-            <div style={{marginTop: '8pt'}}>
-                Based on these estimates, your retirement will last {distributionLengthYears} years and this account will
-                support between {formatPct(incomePct * (1/.8))} and {formatPct(incomePct * (1/.75))} of your 
-                estimated retirement income. Most financial experts recommend that plan to budget your 
-                retirement based on 75%-80% of your current income - this includes income from all 
-                sources including Social Security, IRAs and other investments not included here.
-                Adjusted for inflation, your estimated annual distribution is the equivalent 
-                of {formatCurrency(currentSalary * incomePct)} annually, 
-                or {formatCurrency((currentSalary * incomePct) / 12)} monthly.
-            </div>
-            <div style={{marginTop: '8pt'}}>
-                The estimates provided are base on a number of factors including average stock and bond market 
-                performance<sup>[1]</sup> over the last 30 years, inflation over the same period, your investment profile, 
-                as well as how much you contribute to your retirement during your active working years. The following are 
-                some additional information about your retirement. 
-                <br/>
-                <table style={{marginTop: '24pt', width: "60%", border: "solid black 1pt", borderCollapse: "collapse"}}>
-                    <tr>
-                        <td><strong>Retirement funds will last until</strong></td>
-                        <td>{retirementDepleteYear}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total Distribution Amount ({distributionLengthYears} years)</strong></td>
-                        <td>{formatCurrency(totalDistributions)}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total Interest</strong></td>
-                        <td>{formatCurrency(totalInterest)}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Estimated Growth Rate<sup>[2]</sup></strong></td>
-                        <td>{formatPct(weightedGrowthRate)}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Estimated Inflation Rate<sup>[3]</sup></strong></td>
-                        <td>{formatPct(inflationRate)}</td>
-                    </tr>
-                </table>
-            </div>
-            <div style={{marginTop: '32pt'}}>
-                <div style={{fontSize: '8pt'}}>
-                    [1] Stock market performance is analyzed over a 30 year period to estimate average year-over-year growth. 
-                    Future performance may vary.
+        <div>
+            <Paper style={{width: '95%', height: '80%', textAlign: 'left', padding: '4pt 4pt 2pt'}} hidden={retirementData!==null}>
+                <div style={{marginTop: '8pt'}}>
+                    <h3>Retirement Estimator</h3>
+                    <p>
+                        This calculator is for demonstration purposes only.
+                    </p>
+                    <table className={'helpguide'}>
+                        <tr>
+                            <td><strong>Age</strong></td>
+                            <td>Enter your current age</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retirement Age</strong></td>
+                            <td>Enter the when you wish to retire</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Current Salary</strong></td>
+                            <td>Enter your current salary</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost of Living Adjustment</strong></td>
+                            <td>Enter the estimated annual increase for your current salary. We'll use this to 
+                                model all of your working years. Typically COLA raises are between 2-3%.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Current Retirement Balance</strong></td>
+                            <td>Enter the current balance from your retirement account</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Self Contribution Pct</strong></td>
+                            <td>Enter the percentage of your salary you want to contribute to your retirement account</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Employer Contribution Pct</strong></td>
+                            <td>Enter the percentage of your salary your employer will contribute to your retirement account</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Post-retirement Interest Rate</strong></td>
+                            <td>Estimate the interest you will accrue on your account during retirement. Don't worry about
+                                inflation, we'll take care of that in your distribution calculations.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distribution Frequence</strong></td>
+                            <td>Enter the value of how frequenly you wish to receive annual distributions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retirement Duration</strong></td>
+                            <td>Enter the number of years you want your retirement to last.
+                                If set to <code>0</code>, the calculator will estimate based on a set percentage 
+                                of your retirement account distributed each year.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Income Replacement Percentage</strong></td>
+                            <td>If <em>Retirement Duration</em> is set to <code>0</code>,
+                                then you can set the percentage of your last salary you wish to 
+                                take annually.  Note that if <em>Retirement Duration</em> is set to any
+                                value greater than <code>0</code>, it will take precedence over this value.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Investment Profile</strong></td>
+                            <td>Enter your tolerance for investment risk.  The higher the value, the higher the risk,
+                                and potentially higher return (and loss) on investment.  The profile value is used
+                                to create a <em>weighted growth rate</em> which uses current stock and bond rates
+                                to estimate your investment growth over time.
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-                <div style={{fontSize: '8pt'}}>
-                    [2] Estimated growth rate is calculated based on stock and bond market performance, and your
-                    investment profile is factored in. The result is the estimate growth rate of your retirement
-                    account during your working years. Again, past performance is not an indicator of future gain.
+            </Paper>
+            <Paper style={{width: '80%', height: '80%', textAlign: 'left', padding: '4pt 4pt 2pt'}} hidden={retirementData===null}>
+                <div style={{marginTop: '8pt'}}>
+                    The estimates provided are base on a number of factors including average stock and bond market 
+                    performance<sup>[1]</sup> over the last 30 years, inflation over the same period, your investment profile, 
+                    as well as how much you contribute to your retirement during your active working years. The following are 
+                    some additional information about your retirement. <em>These are only estimates, and do <u>not</u> imply 
+                    actual values at retirement</em>.
+                    <br/>
+                    <h3>Summary</h3>
+                    <table className={'summary'} style={{marginTop: '8pt', width: "60%", border: "solid black 1pt", borderCollapse: "collapse"}}>
+                        <tr>
+                            <td><strong>Retirement Year</strong></td>
+                            <td>{retirementYear}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retirement Age</strong></td>
+                            <td>{retirementAge}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Working years before retirement</strong></td>
+                            <td>{retirementYear - new Date().getFullYear()}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Self Contributions</strong></td>
+                            <td>{formatCurrency(totalSelfContributions)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Employer Contributions</strong></td>
+                            <td>{formatCurrency(totalEmployerContributions)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Balance at Retirement</strong></td>
+                            <td>{formatCurrency(balanceAtRetirement)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estimated Total Annual Retirement Budget @ 80%</strong><sup>[2]</sup></td>
+                            <td>{formatCurrency(targetAnnualRetirementBudget)}</td>
+                        </tr>
+                        <tr>
+                            <td style={{paddingLeft: '24pt'}}><em>Annual Funding Provided By this Account</em></td>
+                            <td><em>{formatCurrency(estimatedProvidedBudget)}</em></td>
+                        </tr>
+                        <tr>
+                            <td style={{paddingLeft: '24pt'}}><em>Percentage of Retirement Funding</em></td>
+                            <td><em>{formatPct(estimatedProvidedPct)}</em></td>
+                        </tr>
+                        <tr>
+                            <td style={{paddingLeft: '24pt'}}><em>Annual Retirement Funding Shortfall</em></td>
+                            <td><em>{estimatedShortfall > 0 ? formatCurrency(estimatedShortfall) : '-'}</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estimated Retirement Fund Duration</strong></td>
+                            <td>{distributionLengthYears} years</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retirement funds will last until</strong></td>
+                            <td>{retirementDepleteYear} (Age {retirementAge + distributionLengthYears})</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Distribution Amount ({distributionLengthYears} years) </strong></td>
+                            <td>{formatCurrency(totalDistributions)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Interest</strong></td>
+                            <td>{formatCurrency(totalInterest)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estimated Growth Rate<sup>[3]</sup></strong></td>
+                            <td>{formatPct(weightedGrowthRate)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estimated Inflation Rate<sup>[4]</sup></strong></td>
+                            <td>{formatPct(inflationRate)}</td>
+                        </tr>
+                    </table>
                 </div>
-                <div style={{fontSize: '8pt'}}>
-                    [3] All retirement distributions are automatically adjusted annually using the average inflation 
-                    rate over the last 20 years.  
+                <div style={{marginTop: '32pt'}}>
+                    <div style={{fontSize: '8pt'}}>
+                        [1] Stock market performance is analyzed over a 30 year period to estimate average year-over-year growth. 
+                        Future performance may vary.
+                    </div>
+                    <div style={{fontSize: '8pt'}}>
+                        [2] Based on your current salary. Distribution amounts are calculated in current year amounts.
+                        Most financial advisors recommend your retirement income replace 80% of your working income 
+                        from all income sources, including Social Security, IRAs, and other investments you may have and not included here.
+                        This estimate is used as a guage how prepared you will be for retirement. Nevertheless, consult a 
+                        professional, trusted financial advisor about your particular situation and strategies for retirement.
+                    </div>
+
+                    <div style={{fontSize: '8pt'}}>
+                        [3] Estimated growth rate is calculated based on stock and bond market performance, and your
+                        investment profile is factored in. The result is the estimate growth rate of your retirement
+                        account during your working years. Again, past performance is not an indicator of future gain.
+                    </div>
+                    <div style={{fontSize: '8pt'}}>
+                        [4] All retirement distributions are automatically adjusted annually using the average inflation 
+                        rate over the last 20 years.  
+                    </div>
                 </div>
-            </div>
-        </Paper>
+            </Paper>
+        </div>
+
     );
 
 };

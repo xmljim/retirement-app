@@ -1,5 +1,5 @@
 import { FormControl, Input, InputAdornment, InputLabel, MenuItem, Select, Slider, Button, Tooltip } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import CurrencyTextField from '@unicef/material-ui-currency-textfield';
 import Typography from '@material-ui/core/Typography';
@@ -21,6 +21,11 @@ export const RetirementForm = ({onDataUpdate}) => {
     const [retirementDuration, setRetirementDuration] = useState(0);
     const [incomeReplacementPct, setIncomeReplacementPct] = useState(0);
     const [investmentProfile, setInvestmentProfile] = useState('Moderate');
+    const [disabled, setDisabled] = useState(true);
+
+    useEffect(() => {
+        setDisabled(age === 0 || retirementAge === 0 || currentSalary === 0 || currentRetirementBalance === 0)
+    },[age, retirementAge, currentSalary, currentRetirementBalance]);
 
     const onInvestmentStyleChange = (event, value) => {
         let thresholds = [
@@ -114,8 +119,16 @@ export const RetirementForm = ({onDataUpdate}) => {
         return currency;
     };
 
+    const onKeyPressEvent = (e) => {
+        if (e.code === 'Enter') {
+            if (!disabled) {
+                onSubmit(e);
+            }
+        }
+    }
+
     return (
-        <div style={{textAlign: 'left', marginTop: '24pt', marginLeft: '12pt'}}>
+        <div style={{textAlign: 'left', marginTop: '24pt', marginLeft: '12pt'}} onKeyPress={e => onKeyPressEvent(e)}>
             <div style={{marginTop: '10pt'}}>
                 <FormControl style={{width: '240pt'}}>
                     <InputLabel>Age</InputLabel>
@@ -148,7 +161,7 @@ export const RetirementForm = ({onDataUpdate}) => {
                     <Input type="number" defaultValue={colaPct} onChange={(e) => setColaPct(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
                         inputProps={{
-                            step: ".1",
+                            step: "1",
                             lang: "en-US"
                         }}
                     />
@@ -172,7 +185,7 @@ export const RetirementForm = ({onDataUpdate}) => {
                         onChange={e => setSelfContributionPct(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
                         inputProps={{
-                            step: ".1",
+                            step: "1",
                             lang: "en-US"
                         }}
                     />
@@ -187,7 +200,7 @@ export const RetirementForm = ({onDataUpdate}) => {
                         onChange={e => setEmployerContributionPct(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
                         inputProps={{
-                            step: ".1",
+                            step: "1",
                             lang: "en-US"
                         }}
                     />
@@ -202,7 +215,7 @@ export const RetirementForm = ({onDataUpdate}) => {
                         onChange={e => setPostRetirementInvestmentRate(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
                         inputProps={{
-                            step: ".1",
+                            step: "1",
                             lang: "en-US"
                         }}
                     />
@@ -226,7 +239,7 @@ export const RetirementForm = ({onDataUpdate}) => {
                     <InputLabel>Retirement Duration&nbsp;&nbsp;
                         <Tooltip title="Set if you want to calculate distributions on a fixed retirement duration"><HelpIcon color='primary'/></Tooltip>
                     </InputLabel>
-                    <Input type="number" defaultValue={retirementDuration} onChange={e => setRetirementDuration(e.target.value)}
+                    <Input type="number" defaultValue={retirementDuration} onChange={e => setRetirementDuration(parseInt(e.target.value))}
                         endAdornment={<InputAdornment position="end">Years</InputAdornment>}
                     />
                 </FormControl>
@@ -240,10 +253,10 @@ export const RetirementForm = ({onDataUpdate}) => {
                         </Tooltip>
                     </InputLabel>
                     <Input type="number" defaultValue={incomeReplacementPct} 
-                        onChange={e => setIncomeReplacementPct(toPercent(e.target.value))}
+                        onChange={e => setIncomeReplacementPct(toPercent(parseFloat(e.target.value) === NaN ? 0 : parseFloat(e.target.value)))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
                         inputProps={{
-                            step: ".1",
+                            step: "1",
                             lang: "en-US"
                         }}
                     />
@@ -259,7 +272,7 @@ export const RetirementForm = ({onDataUpdate}) => {
                         onChange={(event, value) => onInvestmentStyleChange(event, value)}></Slider>
                 </FormControl>
             </div>
-            <Button variant="contained" color="primary" style={{width: '240pt'}} onClick={e => onSubmit(e)}>
+            <Button variant="contained" disabled={disabled} color="primary" style={{width: '240pt', marginTop: '12pt'}} onClick={e => onSubmit(e)}>
                 Calculate Retirement Estimates
             </Button>
         </div>

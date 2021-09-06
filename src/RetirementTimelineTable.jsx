@@ -47,13 +47,19 @@ export const RetirementTimelineTable = ({retirementData}) => {
             let result = {};
             result.id = year;
             result.year = year;
-            result.type = type;
+            result.type = toTitleCase(type);
             result.transactionAmount = transaction;
             result.interest = interest;
             result.balance = balance;
             return result;
         }
     }
+
+    const toTitleCase = (str) => {
+        let char0 = str.charAt(0).toUpperCase();
+        let rest = str.substring(1);
+        return char0 + rest;
+    };
 
     const formatCurrency = (value) => {
         let formattedNumber = '';
@@ -132,38 +138,9 @@ export const RetirementTimelineTable = ({retirementData}) => {
     ];
 
     return (
-        <div style={{height: 800, width: '85%'}}>
+        <div style={{height: 720, width: '85%'}}>
             <DataGrid rows={rows} columns={columns} pageSize={20}/>
         </div>
     )
-/*
-    return (
-        <TableContainer component={Paper}>
-            <Table className={classes.table} size="small" aria-label="a dense table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Year</TableCell>
-                        <TableCell align="right">Type</TableCell>
-                        <TableCell align="right">Transaction</TableCell>
-                        <TableCell align="right">Interest</TableCell>
-                        <TableCell align="right">Balance</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {rows.map((row) => (
-                        <TableRow key={row.name}>
-                            <TableCell component="th" scope="row">
-                                {row.year}
-                            </TableCell>
-                            <TableCell align="right">{row.type}</TableCell>
-                            <TableCell align="right">{row.transactionAmount}</TableCell>
-                            <TableCell align="right">{row.interest}</TableCell>
-                            <TableCell align="right">{row.balance}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    )
-*/
+
 };
