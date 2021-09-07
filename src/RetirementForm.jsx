@@ -1,4 +1,4 @@
-import { FormControl, Input, InputAdornment, InputLabel, MenuItem, Select, Slider, Button, Tooltip } from '@material-ui/core';
+import { FormControl, Input, InputAdornment, InputLabel, MenuItem, Select, Slider, Button, Tooltip, TextField } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import CurrencyTextField from '@unicef/material-ui-currency-textfield';
@@ -16,6 +16,7 @@ export const RetirementForm = ({onDataUpdate}) => {
     const [selfContributionPct, setSelfContributionPct] = useState(0.0);
     const [employerContributionPct, setEmployerContributionPct] = useState(0.0);
     const [investmentStyle, setInvestmentStyle] = useState(.7);
+    const [contributionFrequency, setContributionFrequency] = useState("SEMI_MONTHLY");
     const [postRetirementInterestRate, setPostRetirementInvestmentRate] = useState(0.04);
     const [distributionFrequency, setDistributionFrequency] = useState('MONTHLY');
     const [retirementDuration, setRetirementDuration] = useState(0);
@@ -88,6 +89,7 @@ export const RetirementForm = ({onDataUpdate}) => {
             selfContributionPct,
             employerContributionPct,
             investmentStyle,
+            contributionFrequency,
             postRetirementInterestRate,
             distributionFrequency,
             retirementDuration,
@@ -128,36 +130,30 @@ export const RetirementForm = ({onDataUpdate}) => {
     }
 
     return (
-        <div style={{textAlign: 'left', marginTop: '24pt', marginLeft: '12pt'}} onKeyPress={e => onKeyPressEvent(e)}>
-            <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Age</InputLabel>
-                    <Input type="number" defaultValue={age} onChange={(e, value) => setAge(toInt(e.target.value))}></Input>
-                </FormControl>
+        <div style={{textAlign: 'left', marginTop: '12pt', marginLeft: '12pt', paddingRight: '48pt'}} onKeyPress={e => onKeyPressEvent(e)}>
+            <div >
+                <TextField label='Age' title='Enter current age' type='number'
+                    margin={'dense'} size={'small'} fullWidth
+                    onChange={(e, value) => setAge(toInt(e.target.value))}/>
             </div>
-            <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Retirement Age&nbsp;&nbsp;
-                        <Tooltip title="Age you wish to retire"><HelpIcon color='primary'/></Tooltip>
-                    </InputLabel>
-                    <Input type="number" defaultValue={retirementAge} 
-                        onChange={(e, value) => setRetirementAge(toInt(e.target.value))}
-                    />
-                </FormControl>
+            <div >
+                <TextField label='Retirement Age' title='Enter age you wish to retire'
+                    margin='dense' size='small' defaultValue={retirementAge} fullWidth 
+                    type='number'
+                    onChange={(e, value) => setRetirementAge(toInt(e.target.value))}/>
             </div>
-            <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
+            <div style={{marginTop: '6pt'}}>
+                <FormControl fullWidth>
                     <CurrencyTextField key={'currentSalary-1'} label='Current Salary' 
-                        defaultValue={currentSalary}
+                        defaultValue={currentSalary} title='Enter your current annual salary'
                         onChange={(e, value) => setCurrentSalary(value)}
                     />
                 </FormControl>
             </div>
             <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Cost of Living Adjustment&nbsp;&nbsp; 
-                        <Tooltip title="Estimate the average annual salary increase"><HelpIcon color='primary'/></Tooltip>
-                    </InputLabel>
+
+                <FormControl fullWidth title='Estimate the average annual salary increase'>
+                    <InputLabel>Cost of Living Adjustment</InputLabel>
                     <Input type="number" defaultValue={colaPct} onChange={(e) => setColaPct(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
                         inputProps={{
@@ -166,9 +162,10 @@ export const RetirementForm = ({onDataUpdate}) => {
                         }}
                     />
                 </FormControl>
+                
             </div>
             <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
+                <FormControl fullWidth title='Enter the current value of your retirement account'>
                     <CurrencyTextField key={'currentRetirement-1'} label='Current Retirement Balance' 
                         defaultValue={currentRetirementBalance}
                         onChange={(e,value) => setCurrentRetirementBalance(value)}
@@ -177,10 +174,8 @@ export const RetirementForm = ({onDataUpdate}) => {
                 </FormControl>
             </div>
             <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Self Contribution Pct&nbsp;&nbsp;
-                        <Tooltip title="Percentage of salary to contribute to retirement"><HelpIcon color='primary'/></Tooltip>
-                    </InputLabel>
+                <FormControl fullWidth title='Percentage of your salary to contribute to the retirement account'>
+                    <InputLabel>Self Contribution Pct</InputLabel>
                     <Input type="number" defaultValue={selfContributionPct} 
                         onChange={e => setSelfContributionPct(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
@@ -191,11 +186,9 @@ export const RetirementForm = ({onDataUpdate}) => {
                     />
                 </FormControl>
             </div>
-            <div style={{marginTop: '12pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Employer Contribution Pct&nbsp;&nbsp;
-                        <Tooltip title="Percentage of salary employer will contribute to retirement"><HelpIcon color='primary'/></Tooltip>
-                    </InputLabel>
+            <div style={{marginTop: '10pt'}}>
+                <FormControl fullWidth title='Percentage of salary employer will contribute to retirement'>
+                    <InputLabel>Employer Contribution Pct</InputLabel>
                     <Input type="number" defaultValue={employerContributionPct} 
                         onChange={e => setEmployerContributionPct(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
@@ -206,11 +199,20 @@ export const RetirementForm = ({onDataUpdate}) => {
                     />
                 </FormControl>
             </div>
-            <div style={{marginTop: '12pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Post-retirement Interest Rate&nbsp;&nbsp;
-                        <Tooltip title="Estimate average interest rate on retirement value after retirement"><HelpIcon color='primary'/></Tooltip>
-                    </InputLabel>
+            <div style={{marginTop: '10pt'}}>
+                <FormControl fullWidth title='Frequency for retirement contributions' >
+                    <InputLabel>Contribution Frequency</InputLabel>
+                    <Select defaultValue={contributionFrequency} onChange={e => setContributionFrequency(e.target.value)}>
+                        <MenuItem value='WEEKLY'>Every Week</MenuItem>
+                        <MenuItem value='BI_WEEKLY'>Every 2 Weeks</MenuItem>
+                        <MenuItem value='SEMI_MONTHLY'>Twice a Month</MenuItem>
+                        <MenuItem value='MONTHLY'>Monthly</MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
+            <div style={{marginTop: '10pt'}}>
+                <FormControl fullWidth title='Estimate average interest rate on retirement value after retirement'>
+                    <InputLabel>Post-retirement Interest Rate</InputLabel>
                     <Input type="number" defaultValue={postRetirementInterestRate * 100} 
                         onChange={e => setPostRetirementInvestmentRate(toPercent(e.target.value))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
@@ -222,10 +224,8 @@ export const RetirementForm = ({onDataUpdate}) => {
                 </FormControl>
             </div>
             <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Distribution Frequency&nbsp;&nbsp;
-                        <Tooltip title="Annual frequency for retirement distributions"><HelpIcon color='primary'/></Tooltip>
-                    </InputLabel>
+                <FormControl fullWidth title='Annual frequency for retirement distributions' >
+                    <InputLabel>Distribution Frequency</InputLabel>
                     <Select defaultValue={distributionFrequency} onChange={e => setDistributionFrequency(e.target.value)}>
                         <MenuItem value='ANNUAL'>Annual</MenuItem>
                         <MenuItem value='SEMI_ANNUAL'>Semi-Annual</MenuItem>
@@ -235,23 +235,17 @@ export const RetirementForm = ({onDataUpdate}) => {
                 </FormControl>
             </div>
             <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Retirement Duration&nbsp;&nbsp;
-                        <Tooltip title="Set if you want to calculate distributions on a fixed retirement duration"><HelpIcon color='primary'/></Tooltip>
-                    </InputLabel>
-                    <Input type="number" defaultValue={retirementDuration} onChange={e => setRetirementDuration(parseInt(e.target.value))}
+                <FormControl fullWidth title='Set if you want to calculate distributions on a fixed retirement duration'>
+                    <InputLabel>Retirement Duration</InputLabel>
+                    <Input type="number" defaultValue={retirementDuration}
+                        onChange={e => setRetirementDuration(parseInt(e.target.value))}
                         endAdornment={<InputAdornment position="end">Years</InputAdornment>}
                     />
                 </FormControl>
             </div>
             <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
-                    <InputLabel>Income Replacement Percentage&nbsp;&nbsp;
-                        <Tooltip 
-                            title="The percentage of the last salary to use for distributions. Set only if you wish to override default distribution calculation.">
-                                <HelpIcon color='primary'/>
-                        </Tooltip>
-                    </InputLabel>
+                <FormControl fullWidth title='The percentage of the last salary to use for distributions. Set only if you wish to override default distribution calculation.'>
+                    <InputLabel>Income Replacement Percentage</InputLabel>
                     <Input type="number" defaultValue={incomeReplacementPct} 
                         onChange={e => setIncomeReplacementPct(toPercent(parseFloat(e.target.value) === NaN ? 0 : parseFloat(e.target.value)))}
                         endAdornment={<InputAdornment position="end">%</InputAdornment>}
@@ -263,7 +257,7 @@ export const RetirementForm = ({onDataUpdate}) => {
                 </FormControl>
             </div>
             <div style={{marginTop: '10pt'}}>
-                <FormControl style={{width: '240pt'}}>
+                <FormControl fullWidth>
                     <Typography id="input-slider" gutterBottom style={{fontSize: '10pt'}}>
                         Investment Profile: {`${investmentStyle * 100}`} ({investmentProfile})
                     </Typography>

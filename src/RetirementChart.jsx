@@ -8,10 +8,15 @@ export const RetirementChart = ({retirementData}) => {
 
     useEffect(() => {
         if (retirementData && retirementData.coefficients) {
+            let currentAgeParam = retirementData.parameters.find(param => param.name === 'currentAge');
+            let currentAge = currentAgeParam.value;
+            let currentYear = new Date().getFullYear();
             let retirementSchedule = retirementData.coefficients.find(coeff => coeff.name === 'retirementSchedule');
             let data = retirementSchedule.value;
             let displayData = data.map(balanceItem => {
-                let label = "Year: " + balanceItem.year + "\n" +
+                let ledgerAge = currentAge + (balanceItem.year - currentYear);
+                let label = "Age: " + ledgerAge + "\n" +
+                    "Year: " + balanceItem.year + "\n" +
                     "Type: " + toTitleCase(balanceItem.type) + "\n" +
                     "Balance: " + formatCurrency(balanceItem.balance) + "\n" +
                     "Interest: " + formatCurrency(balanceItem.interestAccrued) + "\n";
